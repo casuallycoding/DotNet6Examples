@@ -1,6 +1,6 @@
 namespace DotNet6Interface
 {
-    public interface ExampleInterface
+    public interface IExampleInterface
     {
         public void Run();
     }

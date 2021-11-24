@@ -1,6 +1,6 @@
 namespace DotNet6ExamplesOddNamespace
 {
-    public class GlobalNamespaceExample : ExampleInterface
+    public class GlobalNamespaceExample : IExampleInterface
     {
 
         public void print() => Console.WriteLine("Hello, World!");
