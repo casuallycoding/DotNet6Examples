@@ -3,6 +3,7 @@ global using DotNet6Interface;
 
 
 using DotNet6Examples;
+using DotNet6Examples.InterpolatedStringHandler;
 using DotNet6Examples.Lambda_Expressions;
 using DotNet6Examples.LambdaAttributes;
 using DotNet6Examples.StructImprovements;
@@ -14,3 +15,6 @@ new GlobalNamespaceExample2().Run();
 new LambdaExpressions().Run();
 //new LambdaAttributes().Run();
 new StructImprovementExample().Run();
+
+
+new InterpolatedStringHandlerExample().Run();
