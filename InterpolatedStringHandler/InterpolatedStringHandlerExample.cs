@@ -1,80 +1,81 @@
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace DotNet6Examples.InterpolatedStringHandler;
-
-[InterpolatedStringHandler]
-public ref struct LogInterpolatedStringHandler
+namespace DotNet6Examples.InterpolatedStringHandler
 {
-    // Storage for the built-up string
-    StringBuilder builder;
 
-    // Add the receiver argument:
-    public LogInterpolatedStringHandler(int literalLength, int formattedCount)
+    [InterpolatedStringHandler]
+    public ref struct TestInterpolatedStringHandler
     {
-        builder = new StringBuilder(literalLength);
-        Console.WriteLine($"\tliteral length: {literalLength}, formattedCount: {formattedCount}");
+        // Storage for the built-up string
+        StringBuilder builder;
+
+        // Add the receiver argument:
+        public TestInterpolatedStringHandler(int literalLength, int formattedCount)
+        {
+            builder = new StringBuilder(literalLength);
+        }
+
+        public void AppendLiteral(string s)
+        {
+            builder.Append(quoteString(s));
+        }
+
+        public void AppendFormatted<T>(T s)
+        {
+            builder.Append(quoteString(s?.ToString()));
+        }
+
+
+        private String quoteString(String val) => "\"" + val + "\",";
+        internal string GetFormattedText() => builder.Remove(builder.Length - 1, 1).ToString(); //Remove the final comma
     }
 
-    public void AppendLiteral(string s)
+
+
+    public class InterpolatedStringHandlerExample : IExampleInterface
     {
-        Console.WriteLine($"\tAppendLiteral called: {{{s}}}");
-        builder.Append(s);
+        public void Run()
+        {
+            var commaSeperate = new CommaSeperator();
+            var time = DateTime.Now;
+            var user = new User("John");
+
+            commaSeperate.CommaSeperate($"{time}Comma seporated between values{user}");
+            commaSeperate.CommaSeperate($"This should just hit the literal string and be printed");
+            commaSeperate.CommaSeperate($"{time}This will be comma seporated");
+
+
+        }
     }
 
-    public void AppendFormatted<T>(T t)
+    public class CommaSeperator
     {
-        Console.WriteLine($"\tAppendFormatted called: {{{t}}} is of type {typeof(T)}");
-        builder.Append(t?.ToString());
+        public void CommaSeperate(string msg)
+        {
+            Console.WriteLine(msg);
+        }
+
+
+
+        public void CommaSeperate(TestInterpolatedStringHandler builder)
+        {
+            Console.WriteLine(builder.GetFormattedText());
+        }
     }
 
-    internal string GetFormattedText() => builder.ToString();
-}
 
 
 
-
-
-public class InterpolatedStringHandlerExample : IExampleInterface
-{
-    public void Run()
+    public class User
     {
-        var logger = new Logger() { EnabledLevel = LogLevel.Warning };
-        var time = DateTime.Now;
-
-        logger.LogMessage(LogLevel.Error, $"Error Level. CurrentTime: {time}. This is an error. It will be printed.");
-        logger.LogMessage(LogLevel.Trace, $"Trace Level. CurrentTime: {time}. This won't be printed.");
-        //logger.LogMessage(LogLevel.Warning, "Warning Level. This warning is a string, not an interpolated string expression.");
-    }
-}
-
-
-
-public enum LogLevel
-{
-    Off,
-    Critical,
-    Error,
-    Warning,
-    Information,
-    Trace
-}
-
-public class Logger
-{
-    public LogLevel EnabledLevel { get; init; } = LogLevel.Error;
-
-    public void LogMessage(LogLevel level, string msg)
-    {
-        if (EnabledLevel < level) return;
-        Console.WriteLine(msg);
+        public User(String name) => Name = name;
+        string Name { get; set; } = "";
+        public override string ToString() => Name;
     }
 
-    public void LogMessage(LogLevel level, LogInterpolatedStringHandler builder)
-    {
-        if (EnabledLevel < level) return;
-        Console.WriteLine(builder.GetFormattedText());
-    }
+
+
 }
 
 
